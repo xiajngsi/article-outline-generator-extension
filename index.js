@@ -102,6 +102,9 @@ const findTargetPathByPrevIndex = (curr, prevNodeIndex) => {
   return prevData;
 };
 
+const nodeAddAnchorName = (node, tagNodeIndex) => {
+  node.setAttribute('data-id', `xjs-${tagNodeIndex}`);
+};
 // 123 23 234 或者 134 234
 function getTags() {
   const contentDomId = getContentDomId();
@@ -111,14 +114,18 @@ function getTags() {
   if (curTagNodes.length) {
     curTagNodes.forEach((curr, index) => {
       const { nodeName, innerText } = curr;
+      const dataId = curr.dataset.id;
       const headNumber = nodeName.replace('H', '');
       const item = {
         nodeName,
         headNumber,
         innerText,
-        tagNodeIndex: index,
+        tagNodeIndex: dataId || index,
         flag: true
       };
+      if (!dataId) {
+        nodeAddAnchorName(curr, item.tagNodeIndex);
+      }
       let prevNode = index !== 0 ? curTagNodes[index - 1] : null;
       if (prevNode) {
         const prevNodeNumber = getHeaderNumber(prevNode);
@@ -168,7 +175,7 @@ function generatorTree() {
 
   const traverse = (nodeList, level) => {
     nodeList.forEach((node) => {
-      ele = ele + `<div style="padding-left:${padding * level}px">${node.innerText}</div>`;
+      ele = ele + `<div style="padding-left:${padding * level}px"><a href='#${node.tagNodeIndex}'>${node.innerText}</a></div>`;
       if (node.children) {
         traverse(node.children, level + 1);
       }
@@ -186,7 +193,7 @@ function insertStyle() {
       background-color: white;
       position: fixed;
       top: 0;
-      left:0;
+      right:0;
       height: calc(100vh - 50px);
       width: 300px;
       z-index: 9999;
@@ -204,7 +211,7 @@ function insertStyle() {
     }
    
   `;
-  document.querySelector('header').appendChild(style);
+  document.querySelector('head').appendChild(style);
 }
 
 function insertScript(src) {
