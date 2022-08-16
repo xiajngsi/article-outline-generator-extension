@@ -2,7 +2,10 @@ let headsTag = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
 let treeData = {};
 
-const wrapClassName = '_xjs-tree-wrap';
+const prefix = 'xjs';
+
+const wrapClassName = `_${prefix}-tree-wrap`;
+const domId = `${prefix}-outline`;
 const getHeaderNumber = (node) => {
   return node.nodeName.slice(1);
 };
@@ -163,13 +166,119 @@ function getTags() {
   }
 }
 
-function generatorTree() {
-  if (document.querySelector(wrapClassName)) {
-    document.querySelector(wrapClassName).remove();
+function generatorToggle() {
+  const html = `
+  <div class="${prefix}-toggle" style="display: block"> 
+    <i class="${prefix}-toggle-icon" role="button"></i> 
+    <div class="${prefix}-toggle__brand"><span>O</span>outline</div>  
+    <div class="${prefix}-toggle__mover"></div> 
+  </div>`;
+
+  const toggleStyle = `
+  .${prefix}-toggle {
+    --toggler-color-bg: #fff;
+    --toggler-color-text: #6a6a6a;
+    color: var(--color-fg-default,#24292f);
+    background-color: var(--toggler-color-bg);
+    box-shadow: 0 2px 8px var(--color-border-default,var(--color-border-primary));
+    opacity: 1;
+    line-height: 1;
+    position: absolute;
+    let: 0;
+    top: var(--${prefix}-toggler-y,33%);
+    text-align: center;
+    width: 30px;
+    z-index: 1000000001;
+    cursor: pointer;
+    border-radius: 0px 6px 6px 0px;
+    border-width: 1.5px 1.5px 1.5px;
+    border-style: solid solid solid none;
+    border-color: rgb(207, 215, 223) rgb(207, 215, 223) rgb(207, 215, 223);
+    border-image: initial;
+    border-left: none;
+    padding: 2px 0px 32px;
+    transition: right 0.25s ease-in 0.2s, opacity 0.35s ease-in 0.2s;
   }
-  const body = document.querySelector('body');
+  .${prefix}-toggle-icon {
+    position: relative;
+    opacity: 0.65;
+    pointer-events: none;
+    top: 5px;
+  }
+  .${prefix}-toggle-icon::before {
+    // color: var(--toggler-color-text);
+    // content: "";
+    // font-size: 15px;
+    // top: 0px;
+    // width: 16px;
+    // display: inline-block;
+    // font-weight: 400;
+    // position: relative;
+    // font-variant: normal;
+}
+  .${prefix}-toggle__brand {
+    color: var(--toggler-color-text);
+    display: inline-block;
+    pointer-events: none;
+    font-size: 14px;
+    position: relative;
+    top: 10px;
+    transform: rotate(-180deg);
+    writing-mode: tb-rl;
+  }
+  .${prefix}-toggle__brand > span {
+    color: rgb(255, 92, 0) !important;
+  }
+  .${prefix}-toggle__mover {
+    position: absolute;
+    margin-left: 1px;
+    bottom: -2px;
+    left: -2px;
+    right: -2px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 24px;
+    vertical-align: middle;
+    user-select: none;
+    cursor: move;
+    opacity: 0.4;
+    transition: opacity 0.1s ease 0s;
+  }
+  .${prefix}-toggle__mover::before {
+    content: "";
+    height: 2px;
+    min-height: 2px;
+    width: 12px;
+    display: block;
+    background-color: var(--toggler-color-text);
+    border-radius: 1px;
+  }
+  .${prefix}-toggle__mover::after {
+    margin-top: 2px;
+  }
+  .${prefix}-toggle__mover::after {
+    content: "";
+    height: 2px;
+    min-height: 2px;
+    width: 12px;
+    display: block;
+    background-color: var(--toggler-color-text);
+    border-radius: 1px;
+  }
+
+`;
+  const toggleWrap = document.createElement('div');
+  toggleWrap.innerHTML = html;
+  return { node: toggleWrap, style: toggleStyle };
+}
+
+const generatorTree = () => {
   const wrap = document.createElement('div');
   wrap.className = wrapClassName;
+  wrap.setAttribute('style', `display: none`);
   const padding = 10;
   let ele = '';
 
@@ -183,13 +292,10 @@ function generatorTree() {
   };
   traverse(treeData.children, 1);
   wrap.innerHTML = ele;
-  body.appendChild(wrap);
-}
 
-function insertStyle() {
-  const style = document.createElement('style');
-  style.innerHTML = `
-    ._xjs-tree-wrap {
+  // const style = document.createElement('style');
+  const treeStyle = `
+    ._${prefix}-tree-wrap {
       background-color: white;
       position: fixed;
       top: 0;
@@ -200,7 +306,7 @@ function insertStyle() {
       overflow: auto
     }
     @media (prefers-color-scheme: dark) {
-      ._xjs-tree-wrap {
+      ._${prefix}-tree-wrap {
         background-color: black;
         color: white
       }
@@ -209,9 +315,55 @@ function insertStyle() {
     @media (prefers-color-scheme: light) {
       
     }
+    .${prefix}-icon:after {
+      color: var(--toggler-color-text);
+      content: "";
+      font-size: 15px;
+      top: 0px;
+      width: 16px;
+      display: inline-block;
+      font-weight: 400;
+      position: relative;
+      font-variant: normal;
+    }
    
   `;
-  document.querySelector('head').appendChild(style);
+  return { node: wrap, style: treeStyle };
+};
+
+function generatorDom() {
+  const body = document.querySelector('body');
+  const outlineEle = document.createElement('div');
+  outlineEle.id = domId;
+
+  // 目录展示
+  const { node: treeNode, style: treeStyle } = generatorTree();
+  outlineEle.appendChild(treeNode);
+
+  setStyle(treeStyle);
+
+  // toggleEle
+  const { node: toggleEle, style: toggleStyle } = generatorToggle();
+  toggleEle.addEventListener('mouseenter', () => {
+    treeNode.style.setProperty('display', 'block');
+  });
+  setStyle(toggleStyle);
+  outlineEle.appendChild(toggleEle);
+
+  body.appendChild(outlineEle);
+}
+
+let styleHtml = `
+  :root {
+    --toggler-color-bg: #f5f5f5;
+    --color-border-default: #e6e6e6;
+  }
+  @media (prefers-color-scheme: dark) {
+    --toggler-color-bg: dard;
+  }
+`;
+function setStyle(innerStyle) {
+  styleHtml += innerStyle;
 }
 
 function insertScript(src) {
@@ -220,11 +372,31 @@ function insertScript(src) {
   document.querySelector('body').appendChild(script);
 }
 
+const styleDomId = `${prefix}-style`;
+function insertStyle() {
+  const styleEle = document.createElement('style');
+  styleEle.innerHTML = styleHtml;
+  styleEle.setAttribute('id', styleDomId);
+  document.querySelector('head').appendChild(styleEle);
+}
+
+const clear = () => {
+  const styleDom = document.querySelector(`#${styleDomId}`);
+  const bodyDom = document.querySelector(`#${domId}`);
+  if (styleDom) {
+    styleDom.remove();
+  }
+  if (bodyDom) {
+    bodyDom.remove();
+  }
+};
+
 function init() {
+  clear();
   insertScript('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js');
-  insertStyle();
   getTags();
-  generatorTree();
+  generatorDom();
+  insertStyle();
 }
 
 init();
