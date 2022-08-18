@@ -13,14 +13,29 @@
     },
     "content_scripts": [
         {
+            "css": [
+                "./lib/metisMenu.min.css"
+            ],
+            "js": [
+                "./lib/jquery.js",
+                "./lib/metismenu.js"
+            ],
+            "matches": [
+                "*://*/*"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "css": [
+                "style.css"
+            ],
             "js": [
                 "index.js"
             ],
             "matches": [
-                "https://developer.chrome.com/docs/extensions/*",
-                "https://developer.chrome.com/docs/webstore/*",
-                "https://github.com/*"
-            ]
+                "*://*/*"
+            ],
+            "run_at": "document_end"
         }
     ],
     "action": {
