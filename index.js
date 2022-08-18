@@ -11,7 +11,7 @@ const getHeaderNumber = (node) => {
 };
 
 // 对不同网站做处理
-function getContentDomId() {
+const getContentDomId = function() {
   const { host } = window.location;
   let contentId = '';
   switch (host) {
@@ -392,15 +392,15 @@ const clear = () => {
 };
 
 function init() {
+  console.log('outline init begin');
+  
   clear();
   insertScript('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js');
   getTags();
   generatorDom();
   insertStyle();
 }
-
-init();
-
+init()
 function _get(object, path) {
   let currObj;
   while (path.length) {
