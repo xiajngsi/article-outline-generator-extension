@@ -11,7 +11,7 @@ const getHeaderNumber = (node) => {
 };
 
 // 对不同网站做处理
-const getContentDomId = function() {
+const getContentDomId = function () {
   const { host } = window.location;
   let contentId = '';
   switch (host) {
@@ -25,7 +25,7 @@ const getContentDomId = function() {
       break;
   }
   return contentId;
-}
+};
 
 // 上个节点的父元素
 const findParant = (prevNodeIndex) => {
@@ -106,7 +106,11 @@ const findTargetPathByPrevIndex = (curr, prevNodeIndex) => {
 };
 
 const nodeAddAnchorName = (node, tagNodeIndex) => {
-  node.setAttribute('data-id', `xjs-${tagNodeIndex}`);
+  node.setAttribute('data-id', tagNodeIndex);
+};
+
+const getTagNodeIndex = (index) => {
+  return `xjs-${index}`;
 };
 // 123 23 234 或者 134 234
 function getTags() {
@@ -123,7 +127,7 @@ function getTags() {
         nodeName,
         headNumber,
         innerText,
-        tagNodeIndex: dataId || index,
+        tagNodeIndex: dataId || getTagNodeIndex(index),
         flag: true
       };
       if (!dataId) {
@@ -393,14 +397,14 @@ const clear = () => {
 
 function init() {
   console.log('outline init begin');
-  
+
   clear();
-  insertScript('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js');
+  // insertScript('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js');
   getTags();
   generatorDom();
   insertStyle();
 }
-init()
+init();
 function _get(object, path) {
   let currObj;
   while (path.length) {
