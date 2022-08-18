@@ -305,15 +305,30 @@ const generatorTree = () => {
 
   // const style = document.createElement('style');
   const treeStyle = `
+    #xjs-outline ._xjs-tree-wrap .xjs-outline-item a {
+      color: #33333;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .outlineTitle{
+      font-weight: 500;
+      padding: 1.333rem 0;
+      margin: 0 1.667rem;
+      font-size: 16px;
+      line-height: 2rem;
+      color: #1d2129;
+      border-bottom: 1px solid #e4e6eb;
+    }
     ._${prefix}-tree-wrap {
       background-color: white;
       position: fixed;
       top: 0;
       right:0;
-      height: calc(100vh - 50px);
+      height: calc(100vh);
       width: 300px;
       z-index: 9999;
-      overflow: auto
+      overflow: auto;
+      border-left: 1px solid #d0d7de;
     }
     @media (prefers-color-scheme: dark) {
       ._${prefix}-tree-wrap {
@@ -348,6 +363,7 @@ function generatorDom() {
 
   // 目录展示
   const { node: treeNode, style: treeStyle } = generatorTree();
+  
   outlineEle.appendChild(treeNode);
 
   setStyle(treeStyle);
@@ -358,8 +374,7 @@ function generatorDom() {
     treeNode.style.setProperty('display', 'block');
   });
   setStyle(toggleStyle);
-  outlineEle.appendChild(toggleEle);
-
+  outlineEle.appendChild(toggleEle);  
   body.appendChild(outlineEle);
 }
 
