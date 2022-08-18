@@ -279,6 +279,8 @@ function generatorToggle() {
   return { node: toggleWrap, style: toggleStyle };
 }
 
+const outlineItemClass = `${prefix}-outline-item`;
+
 const generatorTree = () => {
   const wrap = document.createElement('div');
   wrap.className = wrapClassName;
@@ -288,7 +290,11 @@ const generatorTree = () => {
 
   const traverse = (nodeList, level) => {
     nodeList.forEach((node) => {
-      ele = ele + `<div style="padding-left:${padding * level}px"><a href='#${node.tagNodeIndex}'>${node.innerText}</a></div>`;
+      ele =
+        ele +
+        `<div style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'><a href='#${node.tagNodeIndex}'>${
+          node.innerText
+        }</a></div>`;
       if (node.children) {
         traverse(node.children, level + 1);
       }
@@ -395,6 +401,18 @@ const clear = () => {
   }
 };
 
+function events() {
+  document.querySelectorAll(`.${outlineItemClass}`).forEach((item) => {
+    item.addEventListener('click', (e) => {
+      const tag = item.dataset.tag;
+      const target = document.querySelector(`[data-id="${tag}"]`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+}
+
 function init() {
   console.log('outline init begin');
 
@@ -403,6 +421,7 @@ function init() {
   getTags();
   generatorDom();
   insertStyle();
+  events();
 }
 init();
 function _get(object, path) {
