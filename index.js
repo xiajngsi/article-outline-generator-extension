@@ -282,19 +282,25 @@ function generatorToggle() {
 const outlineItemClass = `${prefix}-outline-item`;
 
 const generatorTree = () => {
-  const wrap = document.createElement('div');
+  const wrap = document.createElement('ul');
+  wrap.id = 'metismenu'
   wrap.className = wrapClassName;
   wrap.setAttribute('style', `display: none`);
   const padding = 10;
   let ele = '';
 
   const traverse = (nodeList, level) => {
+
     nodeList.forEach((node) => {
+      const aElement = level == 0 ? `<a class="has-arrow" aria-expanded="true" href='#${node.tagNodeIndex}'>${
+          node.innerText
+        }</a>`
+        : `<a aria-expanded="true" href='#${node.tagNodeIndex}'>${
+          node.innerText
+        }</a>`;
       ele =
         ele +
-        `<div style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'><a href='#${node.tagNodeIndex}'>${
-          node.innerText
-        }</a></div>`;
+        `<li style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'>${aElement}</li>`;
       if (node.children) {
         traverse(node.children, level + 1);
       }
@@ -361,6 +367,10 @@ function generatorDom() {
   const outlineEle = document.createElement('div');
   outlineEle.id = domId;
 
+  // const ul = document.createElement('ul');
+  // ul.id = 'metismenu'
+  // console.log('treeData', treeData);
+  
   // 目录展示
   const { node: treeNode, style: treeStyle } = generatorTree();
   
@@ -395,6 +405,12 @@ function insertScript(src) {
   const script = document.createElement('script');
   script.src = src;
   document.querySelector('body').appendChild(script);
+}
+function insertCss(src) {
+  const link = document.createElement('link');
+  link.href = src;
+  link.rel = 'stylesheet';
+  document.querySelector('body').appendChild(link);
 }
 
 const styleDomId = `${prefix}-style`;
@@ -431,12 +447,14 @@ function events() {
 function init() {
   console.log('outline init begin');
 
-  clear();
-  // insertScript('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js');
+  clear();  
   getTags();
   generatorDom();
   insertStyle();
   events();
+  console.log($("#metismenu"));
+  
+  $("#metismenu").metisMenu
 }
 init();
 function _get(object, path) {
