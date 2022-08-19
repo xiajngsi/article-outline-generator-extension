@@ -1,3 +1,7 @@
+ol, ul,li, .scroll-nav__list{
+    margin: 0;
+    padding: 0;
+}
 .scroll-nav__item{
     line-height: 2;
     margin: 4px 0;
@@ -9,6 +13,9 @@
     text-decoration: none;
     font-size: 14px;
     padding-left: 10px;
+}
+.nav__link:hover, a:hover{
+    color: #007fff !important;
 }
 
 .outlineTitle {
