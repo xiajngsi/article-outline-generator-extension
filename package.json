@@ -1,6 +1,6 @@
 {
-  "name": "chrome-extension-better-outliner",
-  "description": "Auto generate outliner for readme.md, article, more",
+  "name": "chrome-extension-smart-outliner",
+  "description": "Auto generate outliner for readme.md, article, post, page, etc.",
   "version": "4.3.5",
   "license": "MIT",
   "repository": {
