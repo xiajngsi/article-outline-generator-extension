@@ -282,39 +282,35 @@ function generatorToggle() {
 const outlineItemClass = `${prefix}-outline-item`;
 
 const generatorTree = () => {
-  const wrap = document.createElement('ul');
-  wrap.id = 'metismenu'
+  const wrap = document.createElement('div');
   wrap.className = wrapClassName;
   wrap.setAttribute('style', `display: none`);
   const padding = 10;
-  let ele = '';
+  let ele = '<ul id = "metismenu">';
 
   const traverse = (nodeList, level) => {
-
     nodeList.forEach((node) => {
-      const aElement = level == 0 ? `<a class="has-arrow" aria-expanded="true" href='#${node.tagNodeIndex}'>${
-          node.innerText
-        }</a>`
-        : `<a aria-expanded="true" href='#${node.tagNodeIndex}'>${
-          node.innerText
-        }</a>`;
-      ele =
-        ele +
-        `<li style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'>${aElement}</li>`;
+      const textNodeHtml = `${node.innerText} <span style='font-weight: 600'>${node.children ? `(${node.children.length})` : ''}</span>`;
+      const aElement =
+        level == 0
+          ? `<a class="has-arrow" aria-expanded="true" href='#${node.tagNodeIndex}'>${textNodeHtml}</a>`
+          : `<a aria-expanded="true" href='#${node.tagNodeIndex}'>${textNodeHtml}</a>`;
+      ele = ele + `<li style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'>${aElement}</li>`;
       if (node.children) {
         traverse(node.children, level + 1);
       }
     });
   };
   traverse(treeData.children, 1);
+  ele += '</ul>';
   wrap.innerHTML = ele;
 
   // const style = document.createElement('style');
   const treeStyle = `
-    #xjs-outline ._xjs-tree-wrap .xjs-outline-item a {
-      color: #33333;
+    .${prefix}-outline-item a {
+      color: #333;
       text-decoration: none;
-      font-size: 16px;
+      font-size: 14px;
     }
     .outlineTitle{
       font-weight: 500;
@@ -325,7 +321,8 @@ const generatorTree = () => {
       color: #1d2129;
       border-bottom: 1px solid #e4e6eb;
     }
-    ._${prefix}-tree-wrap {
+    .${wrapClassName} {
+      padding: 16px 8px;
       background-color: white;
       position: fixed;
       top: 0;
@@ -336,12 +333,15 @@ const generatorTree = () => {
       overflow: auto;
       border-left: 1px solid #d0d7de;
     }
-    @media (prefers-color-scheme: dark) {
-      ._${prefix}-tree-wrap {
-        background-color: black;
-        color: white
-      }
-    }
+    // @media (prefers-color-scheme: dark) {
+    //   ._${prefix}-tree-wrap {
+    //     background-color: black;
+    //     color: white
+    //   }
+    //   .${prefix}-outline-item a {
+    //     color: white;
+    //   }
+    // }
     
     @media (prefers-color-scheme: light) {
       
@@ -370,10 +370,10 @@ function generatorDom() {
   // const ul = document.createElement('ul');
   // ul.id = 'metismenu'
   // console.log('treeData', treeData);
-  
+
   // 目录展示
   const { node: treeNode, style: treeStyle } = generatorTree();
-  
+
   outlineEle.appendChild(treeNode);
 
   setStyle(treeStyle);
@@ -384,7 +384,7 @@ function generatorDom() {
     treeNode.style.setProperty('display', 'block');
   });
   setStyle(toggleStyle);
-  outlineEle.appendChild(toggleEle);  
+  outlineEle.appendChild(toggleEle);
   body.appendChild(outlineEle);
 }
 
@@ -447,14 +447,14 @@ function events() {
 function init() {
   console.log('outline init begin');
 
-  clear();  
+  clear();
   getTags();
   generatorDom();
   insertStyle();
   events();
-  console.log($("#metismenu"));
-  
-  $("#metismenu").metisMenu
+  console.log($('#metismenu'));
+
+  $('#metismenu').metisMenu;
 }
 init();
 function _get(object, path) {
