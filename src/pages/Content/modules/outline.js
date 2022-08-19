@@ -452,11 +452,10 @@ function init() {
   generatorDom();
   insertStyle();
   events();
-  console.log($('#metismenu'));
 
-  $('#metismenu').metisMenu;
+  // $('#metismenu').metisMenu;
 }
-init();
+
 function _get(object, path) {
   let currObj;
   while (path.length) {
@@ -482,3 +481,5 @@ function _set(object, path, value) {
     }
   }
 }
+
+module.exports = {init}
