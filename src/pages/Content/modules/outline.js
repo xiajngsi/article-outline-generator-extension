@@ -307,76 +307,31 @@ const generatorTree = () => {
 
   // const style = document.createElement('style');
   const treeStyle = `
-    .${prefix}-outline-item a {
-      color: #333;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .outlineTitle{
-      font-weight: 500;
-      padding: 1.333rem 0;
-      margin: 0 1.667rem;
-      font-size: 16px;
-      line-height: 2rem;
-      color: #1d2129;
-      border-bottom: 1px solid #e4e6eb;
-    }
-    .${wrapClassName} {
-      padding: 16px 8px;
-      background-color: white;
-      position: fixed;
-      top: 0;
-      right:0;
-      height: calc(100vh);
-      width: 300px;
-      z-index: 9999;
-      overflow: auto;
-      border-left: 1px solid #d0d7de;
-    }
-    // @media (prefers-color-scheme: dark) {
-    //   ._${prefix}-tree-wrap {
-    //     background-color: black;
-    //     color: white
-    //   }
-    //   .${prefix}-outline-item a {
-    //     color: white;
-    //   }
-    // }
-    
-    @media (prefers-color-scheme: light) {
-      
-    }
-    .${prefix}-icon:after {
-      color: var(--toggler-color-text);
-      content: "";
-      font-size: 15px;
-      top: 0px;
-      width: 16px;
-      display: inline-block;
-      font-weight: 400;
-      position: relative;
-      font-variant: normal;
-    }
+   
    
   `;
   return { node: wrap, style: treeStyle };
 };
 
-function generatorDom() {
+function insertDom(treeNode) {
+  console.log(treeNode);
+  
   const body = document.querySelector('body');
   const outlineEle = document.createElement('div');
   outlineEle.id = domId;
 
-  // const ul = document.createElement('ul');
-  // ul.id = 'metismenu'
-  // console.log('treeData', treeData);
+// title
+  const wrap = document.createElement('div');
+  wrap.className = 'outlineTitle';
+  wrap.innerHTML = 'Outliner';
+  outlineEle.appendChild(wrap);
 
   // 目录展示
-  const { node: treeNode, style: treeStyle } = generatorTree();
+  // const { node: treeNode, style: treeStyle } = generatorTree();
+  // setStyle(treeStyle);
 
   outlineEle.appendChild(treeNode);
 
-  setStyle(treeStyle);
 
   // toggleEle
   const { node: toggleEle, style: toggleStyle } = generatorToggle();
@@ -387,6 +342,7 @@ function generatorDom() {
   outlineEle.appendChild(toggleEle);
   body.appendChild(outlineEle);
 }
+
 
 let styleHtml = `
   :root {
@@ -444,17 +400,16 @@ function events() {
   });
 }
 
-function init() {
+function init(dom) {
   console.log('outline init begin');
 
   clear();
   getTags();
-  generatorDom();
+  insertDom(dom)
   insertStyle();
   events();
-
-  // $('#metismenu').metisMenu;
 }
+
 
 function _get(object, path) {
   let currObj;
