@@ -334,12 +334,13 @@ function insertDom(treeNode) {
 
 
   // toggleEle
-  const { node: toggleEle, style: toggleStyle } = generatorToggle();
-  toggleEle.addEventListener('mouseenter', () => {
-    treeNode.style.setProperty('display', 'block');
-  });
-  setStyle(toggleStyle);
-  outlineEle.appendChild(toggleEle);
+  // const { node: toggleEle, style: toggleStyle } = generatorToggle();
+  // toggleEle.addEventListener('mouseenter', () => {
+  //   treeNode.style.setProperty('display', 'block');
+  // });
+  // setStyle(toggleStyle);
+  // outlineEle.appendChild(toggleEle);
+  
   body.appendChild(outlineEle);
 }
 

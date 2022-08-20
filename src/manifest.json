@@ -3,6 +3,9 @@
   "name": "chrome-extension-smart-outliner",
   "description": "A chrome extension boilerplate built with React 17, Webpack 5, and Webpack Dev Server 4",
   "options_page": "options.html",
+    "permissions": [
+      "storage","activeTab","scripting"
+    ],
   "background": { "service_worker": "background.bundle.js" },
   "action": {
     "default_popup": "popup.html",
@@ -13,7 +16,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://*/*", "https://*/*", "<all_urls>"],
+      "matches": ["http://*/*", "https://*/*"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }

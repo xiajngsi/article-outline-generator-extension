@@ -20,6 +20,8 @@ const Popup = () => {
           Learn React!
         </a>
       </header>
+      <h2>White domain list </h2>
+      <textarea name="whiteList" id="whiteList" cols="30" rows="10"></textarea>
     </div>
   );
 };
