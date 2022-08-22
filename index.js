@@ -289,6 +289,12 @@ function generatorToggle() {
 
 const outlineItemClass = `${prefix}-outline-item`;
 
+function getOutlineItemByDataTag(tag) {
+  return document.querySelector(`[data-tag=${tag}]`);
+}
+
+const activeItemClassName = `${prefix}-item-active`;
+
 const generatorTree = () => {
   const wrap = document.createElement('div');
   wrap.className = wrapClassName;
@@ -350,6 +356,9 @@ const generatorTree = () => {
     //     color: white;
     //   }
     // }
+    .${activeItemClassName} a {
+      color: red
+    }
     
     @media (prefers-color-scheme: light) {
       
@@ -440,29 +449,45 @@ const clear = () => {
   }
 };
 
+function getHeadingEleByDataId(id) {
+  return document.querySelector(`[data-id=${id}]`);
+}
+
 function activeHandler() {
   const tags = getAllTags();
-  let lastDisNode = null;
+  document.querySelectorAll(`.${outlineItemClass}`).forEach((node) => {
+    node.classList.remove(activeItemClassName);
+  });
+  let lastDisNode = tags[0];
   let minDis;
   tags.forEach((tag) => {
-    const dis = 1;
-    if (minDis !== undefined && dis < minDis) {
-      lastDisNode = tag;
+    const ele = getHeadingEleByDataId(tag.tagNodeIndex);
+    const dis = ele.getBoundingClientRect().top;
+    if (dis > 0) {
+      if (!minDis) {
+        minDis = dis;
+        lastDisNode = tag;
+      } else if (dis < minDis) {
+        minDis = dis;
+        lastDisNode = tag;
+      }
     }
   });
+
+  getOutlineItemByDataTag(lastDisNode.tagNodeIndex).classList.add(activeItemClassName);
 }
 
 function events() {
   document.querySelectorAll(`.${outlineItemClass}`).forEach((item) => {
     item.addEventListener('click', (e) => {
       const tag = item.dataset.tag;
-      const target = document.querySelector(`[data-id="${tag}"]`);
+      const target = getHeadingEleByDataId(tag);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
     });
   });
-  // window.addEventListener('scroll', activeHandler)
+  window.addEventListener('scroll', activeHandler);
 }
 
 function init() {
@@ -477,9 +502,6 @@ function init() {
   generatorDom();
   insertStyle();
   events();
-  console.log($('#metismenu'));
-
-  $('#metismenu').metisMenu;
 }
 init();
 function _get(object, path) {
