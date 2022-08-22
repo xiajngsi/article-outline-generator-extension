@@ -82,7 +82,7 @@ const findTargetPathByPrevIndex = (curr, prevNodeIndex) => {
   };
   find(treeData.children);
 
-  const tr = (targetNumber) => {
+  const tr = () => {
     return stack.find((item) => item.headNumber === number);
   };
 
@@ -121,27 +121,26 @@ const getAllTags = () => {
     const { nodeName, innerText } = curr;
     const dataId = curr.dataset.id;
     const headNumber = nodeName.replace('H', '');
-    const item =  {
+    const item = {
       ...curr,
       nodeName,
       headNumber,
       innerText,
-      tagNodeIndex: dataId || getTagNodeIndex(index),
+      tagNodeIndex: dataId || getTagNodeIndex(index)
     };
     if (!dataId) {
       nodeAddAnchorName(curr, item.tagNodeIndex);
     }
-    return item
-  }) 
-}
+    return item;
+  });
+};
 // 123 23 234 或者 134 234
 function getTags() {
-  const curTagNodes = getAllTags()
+  const curTagNodes = getAllTags();
   let lastItem = treeData;
   if (curTagNodes.length) {
     curTagNodes.forEach((curr, index) => {
-      const { nodeName, innerText } = curr;  
-      const item = curr
+      const item = curr;
       let prevNode = index !== 0 ? curTagNodes[index - 1] : null;
       if (prevNode) {
         const prevNodeNumber = getHeaderNumber(prevNode);
@@ -442,16 +441,15 @@ const clear = () => {
 };
 
 function activeHandler() {
-  const tags = getAllTags()
-  let lastDisNode = null
-  let minDis
+  const tags = getAllTags();
+  let lastDisNode = null;
+  let minDis;
   tags.forEach((tag) => {
-    const dis = 1
-    if(minDis !== undefined && dis < minDis ) {
-      lastDisNode = tag
+    const dis = 1;
+    if (minDis !== undefined && dis < minDis) {
+      lastDisNode = tag;
     }
-  })
-
+  });
 }
 
 function events() {
@@ -469,10 +467,10 @@ function events() {
 
 function init() {
   console.log('outline init begin');
-  const allTags = getAllTags()
-  if(!allTags.length) {
+  const allTags = getAllTags();
+  if (!allTags.length) {
     console.log('没有 heading 标签');
-    return
+    return;
   }
   clear();
   getTags();

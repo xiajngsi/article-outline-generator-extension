@@ -1,0 +1,26 @@
+{
+  "name": "generatormulu",
+  "version": "1.0.0",
+  "description": "痛点：github 或者知乎等看文章时，没有目录，没办法获取文章整体内容 解决： 自动生成目录",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "devDependencies": {
+    "eslint": "^8.22.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xiajngsi/article-outline-generator-extension.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiajngsi/article-outline-generator-extension/issues"
+  },
+  "homepage": "https://github.com/xiajngsi/article-outline-generator-extension#readme"
+}
