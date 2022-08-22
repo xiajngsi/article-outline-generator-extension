@@ -112,34 +112,43 @@ const nodeAddAnchorName = (node, tagNodeIndex) => {
 const getTagNodeIndex = (index) => {
   return `xjs-${index}`;
 };
-// 123 23 234 或者 134 234
-function getTags() {
+
+const getAllTags = () => {
   const contentDomId = getContentDomId();
   const queryStr = headsTag.map((item) => `${contentDomId} ${item}`).join(',');
   const curTagNodes = document.querySelectorAll(queryStr);
+  return Array.from(curTagNodes).map((curr, index) => {
+    const { nodeName, innerText } = curr;
+    const dataId = curr.dataset.id;
+    const headNumber = nodeName.replace('H', '');
+    const item =  {
+      ...curr,
+      nodeName,
+      headNumber,
+      innerText,
+      tagNodeIndex: dataId || getTagNodeIndex(index),
+    };
+    if (!dataId) {
+      nodeAddAnchorName(curr, item.tagNodeIndex);
+    }
+    return item
+  }) 
+}
+// 123 23 234 或者 134 234
+function getTags() {
+  const curTagNodes = getAllTags()
   let lastItem = treeData;
   if (curTagNodes.length) {
     curTagNodes.forEach((curr, index) => {
-      const { nodeName, innerText } = curr;
-      const dataId = curr.dataset.id;
-      const headNumber = nodeName.replace('H', '');
-      const item = {
-        nodeName,
-        headNumber,
-        innerText,
-        tagNodeIndex: dataId || getTagNodeIndex(index),
-        flag: true
-      };
-      if (!dataId) {
-        nodeAddAnchorName(curr, item.tagNodeIndex);
-      }
+      const { nodeName, innerText } = curr;  
+      const item = curr
       let prevNode = index !== 0 ? curTagNodes[index - 1] : null;
       if (prevNode) {
         const prevNodeNumber = getHeaderNumber(prevNode);
         const currNodeNumber = getHeaderNumber(curr);
         // 1 > 2 | 1 > 3 | 1 > 4 前一个节点的 children 的第一个元素就当前元素, 对于 1 > 3 > 4 > 2 > 3 的情况 2 和 3 是平级的，所以找父元素不是当前元素减 1 则 找 当前元素 -2 的节点
         if (prevNodeNumber < currNodeNumber) {
-          lastItem.children = [item];
+          lastItem.children = [curr];
           // 1 > 2 > 2 上个元素的 children 加上这个元素
         } else if (prevNodeNumber == currNodeNumber) {
           const target = findParant(lastItem.tagNodeIndex);
@@ -432,6 +441,19 @@ const clear = () => {
   }
 };
 
+function activeHandler() {
+  const tags = getAllTags()
+  let lastDisNode = null
+  let minDis
+  tags.forEach((tag) => {
+    const dis = 1
+    if(minDis !== undefined && dis < minDis ) {
+      lastDisNode = tag
+    }
+  })
+
+}
+
 function events() {
   document.querySelectorAll(`.${outlineItemClass}`).forEach((item) => {
     item.addEventListener('click', (e) => {
@@ -442,11 +464,16 @@ function events() {
       }
     });
   });
+  // window.addEventListener('scroll', activeHandler)
 }
 
 function init() {
   console.log('outline init begin');
-
+  const allTags = getAllTags()
+  if(!allTags.length) {
+    console.log('没有 heading 标签');
+    return
+  }
   clear();
   getTags();
   generatorDom();
