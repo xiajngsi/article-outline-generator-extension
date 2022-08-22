@@ -458,28 +458,34 @@ function activeHandler() {
   document.querySelectorAll(`.${outlineItemClass}`).forEach((node) => {
     node.classList.remove(activeItemClassName);
   });
-  let lastDisNode = tags[0];
-  let minDis;
-  tags.forEach((tag) => {
+
+  let lastDisNode;
+  let viewFirstEleDis;
+  const viewFirstEleIndex = tags.findIndex((tag) => {
     const ele = getHeadingEleByDataId(tag.tagNodeIndex);
     const dis = ele.getBoundingClientRect().top;
-    if (dis > 0) {
-      if (!minDis) {
-        minDis = dis;
-        lastDisNode = tag;
-      } else if (dis < minDis) {
-        minDis = dis;
-        lastDisNode = tag;
-      }
-    }
+    viewFirstEleDis = dis;
+    return dis > 0;
   });
-
+  if (viewFirstEleIndex == -1) {
+    lastDisNode[tags.length - 1];
+  }
+  if (viewFirstEleIndex == 0) {
+    lastDisNode = tags[0];
+  }
+  if (viewFirstEleIndex > 0) {
+    if (viewFirstEleDis < 50) {
+      lastDisNode = tags[viewFirstEleIndex];
+    } else {
+      lastDisNode = tags[viewFirstEleIndex - 1];
+    }
+  }
   getOutlineItemByDataTag(lastDisNode.tagNodeIndex).classList.add(activeItemClassName);
 }
 
 function events() {
   document.querySelectorAll(`.${outlineItemClass}`).forEach((item) => {
-    item.addEventListener('click', (e) => {
+    item.addEventListener('click', () => {
       const tag = item.dataset.tag;
       const target = getHeadingEleByDataId(tag);
       if (target) {
