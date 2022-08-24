@@ -177,17 +177,17 @@ function getTags() {
     });
   }
 }
-
+const toggleClassName = `${prefix}-toggle`;
 function generatorToggle() {
   const html = `
-  <div class="${prefix}-toggle" style="display: block"> 
+  <div class="${toggleClassName}" style="display: block"> 
     <i class="${prefix}-toggle-icon" role="button"></i> 
     <div class="${prefix}-toggle__brand"><span>O</span>outline</div>  
     <div class="${prefix}-toggle__mover"></div> 
   </div>`;
 
   const toggleStyle = `
-  .${prefix}-toggle {
+  .${toggleClassName} {
     --toggler-color-bg: #fff;
     --toggler-color-text: #6a6a6a;
     color: var(--color-fg-default,#24292f);
@@ -195,9 +195,9 @@ function generatorToggle() {
     box-shadow: 0 2px 8px var(--color-border-default,var(--color-border-primary));
     opacity: 1;
     line-height: 1;
-    position: absolute;
-    let: 0;
-    top: var(--${prefix}-toggler-y,33%);
+    position: fixed;
+    right: 0;
+    top: 50vh;
     text-align: center;
     width: 30px;
     z-index: 1000000001;
@@ -300,7 +300,8 @@ const generatorTree = () => {
   wrap.className = wrapClassName;
   wrap.setAttribute('style', `display: none`);
   const padding = 10;
-  let ele = '<ul id = "metismenu">';
+  const { domStr: closedomStr, style: closeStyle } = generatorClose();
+  let ele = `${closedomStr}<div class='${prefix}-header'>outlint</div><ul class = "${prefix}-tree">`;
 
   const traverse = (nodeList, level) => {
     nodeList.forEach((node) => {
@@ -321,6 +322,7 @@ const generatorTree = () => {
 
   // const style = document.createElement('style');
   const treeStyle = `
+    ${closeStyle}
     .${prefix}-outline-item a {
       color: #333;
       text-decoration: none;
@@ -347,6 +349,13 @@ const generatorTree = () => {
       overflow: auto;
       border-left: 1px solid #d0d7de;
     }
+    .${prefix}-tree {
+      margin-top: 16px;
+    }
+    .${prefix}-header {
+      font-weight: 600;
+      font-size: 16px;
+    }
     // @media (prefers-color-scheme: dark) {
     //   ._${prefix}-tree-wrap {
     //     background-color: black;
@@ -357,7 +366,7 @@ const generatorTree = () => {
     //   }
     // }
     .${activeItemClassName} a {
-      color: red
+      color: var(--primary-color, red)
     }
     
     @media (prefers-color-scheme: light) {
@@ -379,6 +388,22 @@ const generatorTree = () => {
   return { node: wrap, style: treeStyle };
 };
 
+const closeClassName = `${prefix}-close`;
+function generatorClose() {
+  const str = `<span class='${closeClassName}'>
+  <svg t="1661342858920" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7263" width="15" height="15"><path d="M563.8 512l262.5-312.9c4.4-5.2 0.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9c-4.4 5.2-0.7 13.1 6.1 13.1h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z" p-id="7264"></path></svg>
+  </span>`;
+  const style = `
+    .${closeClassName} {
+      position: absolute;
+      top: 12px;
+      right: 12px
+    }
+  `;
+
+  return { domStr: str, style };
+}
+
 function generatorDom() {
   const body = document.querySelector('body');
   const outlineEle = document.createElement('div');
@@ -387,6 +412,8 @@ function generatorDom() {
   // const ul = document.createElement('ul');
   // ul.id = 'metismenu'
   // console.log('treeData', treeData);
+
+  // 关闭按钮
 
   // 目录展示
   const { node: treeNode, style: treeStyle } = generatorTree();
@@ -397,9 +424,7 @@ function generatorDom() {
 
   // toggleEle
   const { node: toggleEle, style: toggleStyle } = generatorToggle();
-  toggleEle.addEventListener('mouseenter', () => {
-    treeNode.style.setProperty('display', 'block');
-  });
+
   setStyle(toggleStyle);
   outlineEle.appendChild(toggleEle);
   body.appendChild(outlineEle);
@@ -412,6 +437,9 @@ let styleHtml = `
   }
   @media (prefers-color-scheme: dark) {
     --toggler-color-bg: dard;
+  }
+  #${domId} {
+    // position: relative
   }
 `;
 function setStyle(innerStyle) {
@@ -494,6 +522,14 @@ function events() {
     });
   });
   window.addEventListener('scroll', activeHandler);
+  document.querySelector(`.${toggleClassName}`).addEventListener('mouseenter', () => {
+    document.querySelector(`.${wrapClassName}`).style.setProperty('display', 'block');
+    document.querySelector(`.${toggleClassName}`).style.setProperty('display', 'none');
+  });
+  document.querySelector(`.${closeClassName}`).addEventListener('click', () => {
+    document.querySelector(`.${wrapClassName}`).style.setProperty('display', 'none');
+    document.querySelector(`.${toggleClassName}`).style.setProperty('display', 'block');
+  });
 }
 
 function init() {
