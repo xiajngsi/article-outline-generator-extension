@@ -299,10 +299,7 @@ const generatorTree = () => {
   const traverse = (nodeList, level) => {
     nodeList.forEach((node) => {
       const textNodeHtml = `${node.innerText} <span style='font-weight: 600'>${node.children ? `(${node.children.length})` : ''}</span>`;
-      const aElement =
-        level == 0
-          ? `<a class="has-arrow" aria-expanded="true" href='#${node.tagNodeIndex}'>${textNodeHtml}</a>`
-          : `<a aria-expanded="true" href='#${node.tagNodeIndex}'>${textNodeHtml}</a>`;
+      const aElement = level == 0 ? `<a class="has-arrow" aria-expanded="true" >${textNodeHtml}</a>` : `<a aria-expanded="true" >${textNodeHtml}</a>`;
       ele = ele + `<li style="padding-left:${padding * level}px" class='${outlineItemClass}' data-tag='${node.tagNodeIndex}'>${aElement}</li>`;
       if (node.children) {
         traverse(node.children, level + 1);
@@ -316,10 +313,15 @@ const generatorTree = () => {
   // const style = document.createElement('style');
   const treeStyle = `
     ${closeStyle}
-    .${prefix}-outline-item a {
+    .${outlineItemClass} {
+      list-style-type: none;
+      cursor: pointer
+    }
+    .${outlineItemClass} a {
       color: #333;
       text-decoration: none;
       font-size: 14px;
+      cursor: pointer
     }
     .outlineTitle{
       font-weight: 500;
@@ -509,14 +511,15 @@ function activeHandler() {
 
 function events() {
   document.querySelectorAll(`.${outlineItemClass}`).forEach((item) => {
-    item.addEventListener('click', () => {
+    const handleClick = () => {
       const tag = item.dataset.tag;
       const target = getHeadingEleByDataId(tag);
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
       activeHandler();
-    });
+    };
+    item.addEventListener('click', handleClick);
   });
   window.addEventListener('scroll', activeHandler);
   document.querySelector(`.${toggleClassName}`).addEventListener('mouseenter', () => {
