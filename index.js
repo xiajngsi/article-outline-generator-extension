@@ -12,18 +12,11 @@ const getHeaderNumber = (node) => {
 
 // 对不同网站做处理
 const getContentDomId = function () {
-  const { host } = window.location;
   let contentId = '';
-  switch (host) {
-    case 'github.com':
-    case 'juejin.im':
-    case 'zhuanlan.zhihu.com':
-      contentId = 'article';
-      break;
-    default:
-      contentId = 'body';
-      break;
-  }
+  const priorityIds = ['article', 'main', 'body'];
+  contentId = priorityIds.find((selector) => {
+    return document.querySelector(selector);
+  });
   return contentId;
 };
 
@@ -441,22 +434,25 @@ let styleHtml = `
   #${domId} {
     // position: relative
   }
+  a {
+    decorator: none;
+  }
 `;
 function setStyle(innerStyle) {
   styleHtml += innerStyle;
 }
 
-function insertScript(src) {
-  const script = document.createElement('script');
-  script.src = src;
-  document.querySelector('body').appendChild(script);
-}
-function insertCss(src) {
-  const link = document.createElement('link');
-  link.href = src;
-  link.rel = 'stylesheet';
-  document.querySelector('body').appendChild(link);
-}
+// function insertScript(src) {
+//   const script = document.createElement('script');
+//   script.src = src;
+//   document.querySelector('body').appendChild(script);
+// }
+// function insertCss(src) {
+//   const link = document.createElement('link');
+//   link.href = src;
+//   link.rel = 'stylesheet';
+//   document.querySelector('body').appendChild(link);
+// }
 
 const styleDomId = `${prefix}-style`;
 function insertStyle() {
@@ -519,6 +515,7 @@ function events() {
       if (target) {
         target.scrollIntoView({ behavior: 'smooth' });
       }
+      activeHandler();
     });
   });
   window.addEventListener('scroll', activeHandler);
