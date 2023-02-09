@@ -20,4 +20,4 @@ https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Modules
 ## github 
 效果如下，左上角是 github 的自带目录，可以看到是覆盖再内容上的，右边是工具生成的目录。
 
-![image](https://user-images.githubusercontent.com/8209488/217700565-5be28561-3eef-48c6-8cc7-188b0d1f4dfb.png)
+![image](https://user-images.githubusercontent.com/8209488/217701666-e564dddc-af09-40eb-bd0c-f9a04bbed315.png)
