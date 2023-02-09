@@ -14,8 +14,10 @@ https://zhuanlan.zhihu.com/p/69150406
 mdn 只显示一级，声明目录下的子目录不会显示
 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Modules  
 对比，左边是 mdn 生成的，右边是 Outlint 工具生成的
+
 ![image](https://user-images.githubusercontent.com/8209488/217699799-006b3652-5b54-4a7f-9a93-eaaad940518d.png)
 
 ## github 
 效果如下
+
 ![image](https://user-images.githubusercontent.com/8209488/217700158-5050d5d3-0960-47b1-895a-a38e10160fd0.png)
