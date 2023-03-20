@@ -1,7 +1,7 @@
 {
-    "name": "Better Outline",
-    "description": "Auto generate outline for readme, article, more",
-    "version": "1.0",
+    "name": "Better TOC",
+    "description": "Auto generate toc for readme, article, more",
+    "version": "1.1",
     "manifest_version": 3,
     "permissions": [
         "scripting"

@@ -49,9 +49,9 @@ var outline = (function (exports) {
         const activeItemClassName = this.activeItemClassName;
         const wrap = document.createElement('div');
         wrap.className = wrapClassName;
-        const padding = 10;
+        const padding = 16;
         const { domStr: closedomStr, style: closeStyle } = this.generatorClose();
-        let ele = `${closedomStr}<div class='${prefix}-header'>TOC</div><ul class = "${prefix}-tree">`;
+        let ele = `${closedomStr}<div class='${prefix}-header'>目录</div><ul class = "${prefix}-tree">`;
         const traverse = (nodeList, level) => {
           nodeList.forEach((node) => {
             const textNodeHtml = `${node.innerText} ${
@@ -74,9 +74,20 @@ var outline = (function (exports) {
       ${closeStyle}
       .${outlineItemClass} {
         list-style-type: none;
-        cursor: pointer
+        cursor: pointer;
+        line-height: 30px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        position: relative;
       }
       .${outlineItemClass} a {
+        color: #333;
+        text-decoration: none;
+        font-size: 14px;
+        cursor: pointer
+      }
+      .${outlineItemClass} a:hover {
         color: #333;
         text-decoration: none;
         font-size: 14px;
@@ -92,7 +103,7 @@ var outline = (function (exports) {
         border-bottom: 1px solid #e4e6eb;
       }
       .${wrapClassName} {
-        padding: 16px 8px;
+        padding: 16px 0 0 0;
         background-color: white;
         position: fixed;
         top: 0;
@@ -104,15 +115,34 @@ var outline = (function (exports) {
         border-left: 1px solid #d0d7de;
       }
       .${prefix}-tree {
-        margin-top: 16px;
+        margin: 16px 0 0 0;
+        height: calc(100vh - 75px);
+        overflow-y: auto;
+        padding: 0;
       }
       .${prefix}-header {
         font-weight: 600;
-        font-size: 16px;
+        font-size: 18px;
+        padding: 0 ${padding}px;
+        color: #333;
       }
 
-      .${activeItemClassName} a {
-        color: var(--primary-color, red)
+      .${activeItemClassName} a, .${activeItemClassName} a:hover{
+        background: linear-gradient(83.21deg,#3245ff 0%,#bc52ee 100%);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      
+      .${activeItemClassName}:before {
+        content: "";
+        position: absolute;
+        top: 4px;
+        left: 0px;
+        margin-top: 4px;
+        width: 4px;
+        height: 16px;
+        background: linear-gradient(83.21deg,#3245ff 0%,#bc52ee 100%);
+        border-radius: 0 4px 4px 0;
       }
       
       @media (prefers-color-scheme: light) {
@@ -140,7 +170,6 @@ var outline = (function (exports) {
         const contentDomId = this.options.contentId;
         const headsTag = this.options.headerTags;
         const queryStr = headsTag.map((item) => `${contentDomId} ${item}`).join(',');
-        console.log('xxx options', this.options, queryStr);
         const curTagNodes = document.querySelectorAll(queryStr);
         return Array.from(curTagNodes).map((curr, index) => {
           const { nodeName, innerText } = curr;
@@ -394,11 +423,25 @@ var outline = (function (exports) {
         }
         return resultOptions;
       });
+      __publicField(this, 'getBaseStyle', () => {
+        const baseHtml = `
+      ${this.domId} {
+        li {
+
+        }
+        ul {
+
+        }
+      }
+    `;
+        return baseHtml;
+      });
       __publicField(this, 'init', (el) => {
         this.clear();
         if (el);
         else {
           this.generatorDom();
+          setStyle(this.getBaseStyle());
           this.insertStyle(styleHtml, this.styleDomId);
           this.events();
         }
@@ -467,9 +510,12 @@ var outline = (function (exports) {
         };
       });
       __publicField(this, 'activeHandler', () => {
-        var _a;
+        var _a, _b;
         const { outlineItemClass, activeItemClassName } = this.getClassNames();
-        const tags = this.tree.getAllTags();
+        if (!this.tree) {
+          return;
+        }
+        const tags = (_a = this.tree) == null ? void 0 : _a.getAllTags();
         document.querySelectorAll(`.${outlineItemClass}`).forEach((node) => {
           node.classList.remove(activeItemClassName);
         });
@@ -495,7 +541,7 @@ var outline = (function (exports) {
           }
         }
         if (lastDisNode) {
-          (_a = getOutlineItemByDataTag(lastDisNode.tagNodeIndex)) == null ? void 0 : _a.classList.add(activeItemClassName);
+          (_b = getOutlineItemByDataTag(lastDisNode.tagNodeIndex)) == null ? void 0 : _b.classList.add(activeItemClassName);
         }
       });
       __publicField(this, 'generatorDom', () => {
@@ -628,10 +674,11 @@ var outline = (function (exports) {
       });
       __publicField(this, 'onLoad', () => {
         window.addEventListener('load', () => {
-          const allTags = this.tree.getAllTags();
+          var _a;
+          const allTags = (_a = this.tree) == null ? void 0 : _a.getAllTags();
           let times = 0;
           let interval;
-          if (!allTags.length) {
+          if (!(allTags == null ? void 0 : allTags.length)) {
             interval = setInterval(() => {
               times = times + 1;
               if (times >= 3) {
@@ -645,17 +692,14 @@ var outline = (function (exports) {
       });
       __publicField(this, 'clearTreeStyle', () => {
         const treeStyle = document.querySelector(`#${this.treeStyleId}`);
-        treeStyle.remove();
+        treeStyle == null ? void 0 : treeStyle.remove();
       });
       __publicField(this, 'clear', () => {
         const styleDom = document.querySelector(`#${this.styleDomId}`);
         const bodyDom = document.querySelector(`#${this.domId}`);
-        if (styleDom) {
-          styleDom.remove();
-        }
-        if (bodyDom) {
-          bodyDom.remove();
-        }
+        styleDom == null ? void 0 : styleDom.remove();
+        bodyDom == null ? void 0 : bodyDom.remove();
+        this.clearTreeStyle();
       });
       this.originOptions = options;
       this.options = this.transformOptions(options);
@@ -674,10 +718,10 @@ var outline = (function (exports) {
   if (window) {
     window.js_outline = outline2;
   }
+  outline2();
   exports.default = Outline;
   exports.outline = outline2;
   Object.defineProperties(exports, { __esModule: { value: true }, [Symbol.toStringTag]: { value: 'Module' } });
   return exports;
 })({});
-
 window.js_outline();
